@@ -1,54 +1,86 @@
 from django.db import models
 from tasks.models import Project, Task
 
-class Bugreport(models.Model):
-    STATUS_LIST = [
-        ("New", "Новый"),
-        ("Processing...", "В работе..."),
-        ("Completed", "Завершена")
-    ]
+
+class BugReport(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     project = models.ForeignKey(
         Project,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     task = models.ForeignKey(
         Task,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True
     )
+    STATUS_CHOICES = [
+        ('New', 'Новая'),
+        ('In_progress', 'В работе'),
+        ('Completed', 'Завершена'),
+    ]
     status = models.CharField(
         max_length=20,
-        choices=STATUS_LIST,
-        default="New"
+        choices=STATUS_CHOICES,
+        default='not selected'
     )
-    priority = models.IntegerField()
+    PRIORITY_CHOICES = [
+        (1, "low"),
+        (2, "medium"),
+        (3, "high"),
+        (4, "Critical"),
+        (5, "immediate fix"),
+    ]
+
+    priority = models.IntegerField(
+        choices=PRIORITY_CHOICES,
+        default=2
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
 class FeatureRequest(models.Model):
-    STATUS_LIST = [
-        ("On review", "На рассмотрении"),
-        ("Completed", "Завершена"),
-        ("Отклонена", "Declined")
-    ]
     title = models.CharField(max_length=100)
     description = models.TextField()
+
     project = models.ForeignKey(
         Project,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
+
     task = models.ForeignKey(
         Task,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True
     )
+
+    STATUS_CHOICES = [
+        ("Not Selected", "Не выбрана"),
+        ("Processing...", "Рассмотрение"),
+        ("Accepted", "Принято"),
+        ("Rejected", "Отклонено"),
+    ]
     status = models.CharField(
-        max_length=10,
-        choices=STATUS_LIST,
-        default="On review"
+        max_length=100,
+        choices=STATUS_CHOICES,
+        default='Not Selected'
     )
-    priority = models.IntegerField()
+
+    PRIORITY_CHOICES = [
+        (1, "low"),
+        (2, "medium"),
+        (3, "high"),
+        (4, "Critical"),
+        (5, "immediate fix"),
+    ]
+    priority = models.IntegerField(
+        choices=PRIORITY_CHOICES,
+        default=2
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
