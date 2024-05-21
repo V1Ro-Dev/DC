@@ -1,9 +1,7 @@
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.urls import reverse
-from django.views import View
+from django.shortcuts import render, redirect
 from django.views.generic import DetailView
-from quality_control.models import BugReport, FeatureRequest
+from .models import BugReport, FeatureRequest
+from .forms import BugReportForm, FeatureRequestForm
 
 
 def index(request):
@@ -20,14 +18,26 @@ def feature_list(request):
     return render(request, 'quality_control/features.html', {'feature_list': features})
 
 
-class IndexView(View):
-    def get(self, request, *args, **kwargs):
-        bug_report_url = reverse('quality_control:bug_report')
-        feature_request_url = reverse('quality_control:feature_request')
-        html = (f"<h1>Система контроля качества</h1>"
-                f"<a href='{bug_report_url}'>Список всех багов</a><br>"
-                f"<a href='{feature_request_url}'>Запросы на улучшение</a>")
-        return HttpResponse(html)
+def create_bug_report(request):
+    if request.method == 'POST':
+        form = BugReportForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('quality_control:bug_report')
+    else:
+        form = BugReportForm()
+    return render(request, 'quality_control/bug_report_form.html', {'form': form})
+
+
+def create_feature_request(request):
+    if request.method == 'POST':
+        form = FeatureRequestForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('quality_control:feature_request')
+    else:
+        form = FeatureRequestForm()
+    return render(request, 'quality_control/feature_request_form.html', {'form': form})
 
 
 class BugDetail(DetailView):
