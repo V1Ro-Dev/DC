@@ -4,7 +4,7 @@ from quality_control import views
 app_name = 'quality_control'
 
 urlpatterns = [
-    path('', views.index, name='quality_control'),
+    path('', views.index, name='index'),
     path('bugs/', views.bug_list, name='bug_report'),
     path('features/', views.feature_list, name='feature_request'),
     path('bugs/<int:bug_id>/', views.BugDetail.as_view(), name='bug_detail'),
